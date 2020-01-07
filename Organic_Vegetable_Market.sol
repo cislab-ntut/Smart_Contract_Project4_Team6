@@ -44,3 +44,49 @@ contract Organic_Vegetable_Market{
 	//支付費用
     function pay_fee(address sender, address receiver, uint amount) public {
         require(amount <= people[sender].balance, "Not enough funds.");
+	people[sender].balance -= amount;
+        people[receiver].balance += amount;
+    }
+	//消費者下單，指定農夫是誰，消費金額，宅配地址
+	function place_order(address famer, uint amount, string memory deliver_address) public{
+	    OrderID++;
+		pay_fee(msg.sender,theSystem, amount);
+		Order_Process theop = new Order_Process(famer, amount, OrderID, deliver_address);
+		people[msg.sender].ops.push(theop);
+	}
+	//確認已收到貨，完成訂單
+	function confirmOrder(uint _OrderID)public{
+	    Order_Process _theop = findOrder(_OrderID);
+	    pay_fee(theSystem,_theop.GetFarmer(),_theop.GetPrice()-1); //給農夫錢錢
+	    pay_fee(theSystem,_theop.Getdeliveryman(),1); //給運送員錢錢
+	    _theop.kill();
+	}
+	//尋找訂單
+	function findOrder(uint _OrderID) public returns (Order_Process){
+	   for(uint i = 0; i < all_user.length; i++){
+			//若為消費者
+			if(people[all_user[i]].job_type == 4){
+			    for(uint j = 0; j < people[all_user[i]].ops.length ; j++){
+			        //找出訂單
+			        if(people[all_user[i]].ops[j].GetId() == _OrderID){
+					    return people[all_user[i]].ops[j]; //回傳訂單
+				    }
+			    }
+			}
+		}
+	}
+	//回傳合格商品資訊
+	function display_product(address indexF) public returns (bool) {
+	    bool ans =  tp.GetPassedVegetables(indexF);
+        return ans;
+    }
+    //農夫申請檢測
+    function famerStartCheck(uint test_val, string memory product)public{
+        tp.RequestCheck(people[msg.sender].job_type, test_val, product);
+    }
+    //檢測商進行檢測，農夫支付費用
+    function checkWork(uint test_val, address theF)public{
+        tp.GoCheck(people[msg.sender].job_type, theF);
+        pay_fee(theF, msg.sender, 1);
+    }
+}
