@@ -4,7 +4,7 @@ import "./Order_Process.sol";
 
 contract Test_Process{
     uint standard = 500;
-	address[] famerIndex;
+    address[] famerIndex;
     struct certificate{
         bool Checked;
         bool organicMark;
