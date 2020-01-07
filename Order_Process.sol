@@ -23,3 +23,24 @@ contract Order_Process{
      function Setdeliveryman(address _deliveryman) public{
        deliveryman  = _deliveryman;
     }
+
+ //刪除訂單
+    function kill() public { 
+        require(msg.sender == owner, "Only owner can call this function.");
+        selfdestruct(owner);
+    }
+    
+    //GET
+    function GetPrice() public returns(uint){
+        return price;
+    }
+    function GetId() public returns(uint){
+        return id;
+    }
+    function GetFarmer() public returns(address){
+        return farmer;
+    }
+    function GetDeliver_address() public returns(string memory){
+        return deliver_address;
+    }
+    }
