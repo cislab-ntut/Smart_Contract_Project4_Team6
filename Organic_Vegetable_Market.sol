@@ -85,7 +85,7 @@ contract Organic_Vegetable_Market{
         tp.RequestCheck(people[msg.sender].job_type, test_val, product);
     }
     //檢測商進行檢測，農夫支付費用
-    function checkWork(uint test_val, address theF)public{
+    function checkWork(address theF)public{
         tp.GoCheck(people[msg.sender].job_type, theF);
         pay_fee(theF, msg.sender, 1);
     }
